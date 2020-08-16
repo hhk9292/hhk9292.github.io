@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Vue on myGitBlog</title>
+    <title>Vues on myGitBlog</title>
     <link>/vue/</link>
-    <description>Recent content in Vue on myGitBlog</description>
+    <description>Recent content in Vues on myGitBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 16 Aug 2020 22:57:58 +0900</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 16 Aug 2020 22:57:58 +0900</pubDate>
       
       <guid>/vue/vuekakao1/</guid>
-      <description></description>
+      <description>0. 공식문서 kakao developers</description>
     </item>
     
   </channel>
