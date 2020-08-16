@@ -12,13 +12,13 @@
     
     
     <item>
-      <title>Vue에서 Kakao SDK for JavaScrip를 사용한 카카오 로그인 구현</title>
+      <title>Vue에서 Kakao SDK for JavaScript를 사용한 카카오 로그인 구현</title>
       <link>/vue/vuekakao1/</link>
       <pubDate>Sun, 16 Aug 2020 22:57:58 +0900</pubDate>
       
       <guid>/vue/vuekakao1/</guid>
       <description>0. 공식문서 kakao developers
-1. 카카오 로그인 프로세스 </description>
+1. 카카오 로그인 프로세스 로그인 과정은 다음과 같다.</description>
     </item>
     
   </channel>
