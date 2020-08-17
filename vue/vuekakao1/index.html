@@ -16,7 +16,7 @@
 1. 카카오 로그인 프로세스 로그인 과정은 다음과 같다.">
 <meta itemprop="datePublished" content="2020-08-16T22:57:58+09:00" />
 <meta itemprop="dateModified" content="2020-08-16T22:57:58+09:00" />
-<meta itemprop="wordCount" content="91">
+<meta itemprop="wordCount" content="449">
 
 
 
@@ -121,7 +121,7 @@
   <h1>Vue에서 Kakao SDK for JavaScript를 사용한 카카오 로그인 구현</h1>
 
   <div class="post-date">
-    <time datetime="2020-08-16T22:57:58&#43;0900">Aug 16, 2020</time> &middot; 1 min read
+    <time datetime="2020-08-16T22:57:58&#43;0900">Aug 16, 2020</time> &middot; 3 min read
   </div>
 
   <h3 id="0-공식문서">0. 공식문서</h3>
@@ -135,8 +135,125 @@
 <li>인증 코드로 토큰 요청</li>
 <li>토큰 전달</li>
 </ol>
-<p>여기까지가 로그인 과정이다. 여기서 1, 2번 과정은 프론트(<code>Vue.js</code>)만으로도 구현할 수 있지만 3, 4번 과정은 서버와 서버 사이에서 요청과 응답이 이뤄지기 때문에 <code>node.js</code>와 <code>express</code>를 이용해 로컬 서버를 만들 것이다. 4번 과정까지 거치면 다른 API요청을 할 때 사용하는 토큰이 발급되고 이를 다시 프론트로 넘겨주는 과정까지 이번 글에서 구현할 예정이다.</p>
-<p><code>Vue.js</code>에서 카카오 서버로 요청을 보낼 때에는 JavaScript 키를 이용할 것이고, 서버에서 카카오 서버로 요청을 보낼 때에는 REST API키를 이용할 것이다.</p>
+<p>여기까지가 로그인 과정이다. 여기서 1, 2번 과정은 프론트(<code>Vue.js</code>)만으로도 구현할 수 있지만 3, 4번 과정은 서버와 서버 사이에서 요청과 응답이 이뤄지기 때문에 <code>Node.js</code>와 <code>express</code>를 이용해 로컬 서버를 만들 것이다. 4번 과정까지 거치면 다른 API 요청을 할 때 사용하는 토큰이 발급되고 이를 다시 프론트로 넘겨주는 과정까지 이번 글에서 구현할 예정이다.</p>
+<p><code>Vue.js</code>에서 카카오 서버로 요청을 보낼 때에는 JavaScript 키를 이용할 것이고, 서버에서 카카오 서버로 요청을 보낼 때에는 REST API 키를 이용할 것이다.</p>
+<h3 id="2-구현">2. 구현</h3>
+<h4 id="0-사용-기술">0. 사용 기술</h4>
+<ul>
+<li><a href="https://nodejs.org">Node.js</a>
+<ul>
+<li>express</li>
+<li>axios</li>
+<li>cors</li>
+</ul>
+</li>
+<li><a href="https://vuejs.org/">Vue.js</a>
+<ul>
+<li>Vue router</li>
+<li>axios</li>
+<li>qs</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-프로젝트-시작">1. 프로젝트 시작</h4>
+<p>먼저 새로운 프로젝트를 시작하기 위해 다음 명령어를 입력한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ vue create front
+$ cd front
+$ npm run serve
+</code></pre></div><p><a href="http://localhost:8080">http://localhost:8080</a>에 들어갔을 때 다음과 같은 화면이 나오면 프로젝트가 잘 시작된 것이다.</p>
+<p><img src="/vue/images/vue_0.png" alt="vue_0"></p>
+<p>서버를 닫고 필요한 모듈을 설치한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ vue add router
+$ npm i axios
+$ mpm i qs
+</code></pre></div><p><code>Vue router</code>의 경우 history 모드를 선택하는 화면에서 Y를 입력하여 설치한다. 필요 없는 파일들을 수정 및 삭제하면 기본 세팅은 끝이 난다.</p>
+<p><code>@/views</code>경로에 <code>KakaoLogin.vue</code> 파일을 생성한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue"><span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">KakaoLogin</span>.<span style="color:#a6e22e">vue</span> <span style="color:#f92672">--&gt;</span>
+&lt;<span style="color:#f92672">template</span>&gt;
+  &lt;<span style="color:#f92672">div</span>&gt;
+    &lt;<span style="color:#f92672">h1</span>&gt;<span style="color:#a6e22e">Kakao</span> <span style="color:#a6e22e">Login</span>&lt;/<span style="color:#f92672">h1</span>&gt;
+  &lt;/<span style="color:#f92672">div</span>&gt;
+&lt;/<span style="color:#f92672">template</span>&gt;
+
+&lt;<span style="color:#f92672">script</span>&gt;
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;KakaoLogin&#39;</span>,
+}
+&lt;/<span style="color:#f92672">script</span>&gt;
+
+&lt;<span style="color:#f92672">style</span>&gt;
+
+&lt;/<span style="color:#f92672">style</span>&gt;
+</code></pre></div><p><code>@/router/index.js</code>파일에 다음과 같이 추가한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// router/index.js
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">KakaoLogin</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;../views/KakaoLogin.vue&#39;</span>
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">routes</span> <span style="color:#f92672">=</span> [
+  ...
+  {
+    <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;/kakaologin&#39;</span>,
+    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;KakaoLogin&#39;</span>,
+    <span style="color:#a6e22e">component</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">KakaoLogin</span>
+  },
+  ...
+]
+</code></pre></div><h4 id="2-kakao-sdk-for-javascript-사용">2. Kakao SDK for JavaScript 사용</h4>
+<p><a href="https://developers.kakao.com/docs/latest/ko/getting-started/sdk-js">Kakao SDK for JavaScript</a></p>
+<p><code>public/index.html</code>에 <code>&lt;script src=&quot;https://developers.kakao.com/sdk/js/kakao.js&quot;&gt;&lt;/script&gt;</code> 코드를 삽입하면 <code>Kakao SDK for JavaScript</code>를 사용할 수 있다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html"><span style="color:#75715e">&lt;!-- public/index.html--&gt;</span>
+<span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
+  &lt;<span style="color:#f92672">head</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">http-equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=edge&#34;</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width,initial-scale=1.0&#34;</span>&gt;
+    &lt;<span style="color:#f92672">link</span> <span style="color:#a6e22e">rel</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;icon&#34;</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&lt;%= BASE_URL %&gt;favicon.ico&#34;</span>&gt;
+    &lt;<span style="color:#f92672">title</span>&gt;<span style="color:#960050;background-color:#1e0010">&lt;</span>%= htmlWebpackPlugin.options.title %&gt;&lt;/<span style="color:#f92672">title</span>&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://developers.kakao.com/sdk/js/kakao.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+  &lt;/<span style="color:#f92672">head</span>&gt;
+  &lt;<span style="color:#f92672">body</span>&gt;
+    &lt;<span style="color:#f92672">noscript</span>&gt;
+      &lt;<span style="color:#f92672">strong</span>&gt;We&#39;re sorry but <span style="color:#960050;background-color:#1e0010">&lt;</span>%= htmlWebpackPlugin.options.title %&gt; doesn&#39;t work properly without JavaScript enabled. Please enable it to continue.&lt;/<span style="color:#f92672">strong</span>&gt;
+    &lt;/<span style="color:#f92672">noscript</span>&gt;
+    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
+    <span style="color:#75715e">&lt;!-- built files will be auto injected --&gt;</span>
+  &lt;/<span style="color:#f92672">body</span>&gt;
+&lt;/<span style="color:#f92672">html</span>&gt;
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">Kakao</span>.<span style="color:#a6e22e">init</span>(<span style="color:#e6db74">&#39;JAVASCRIPT_KEY&#39;</span>);
+
+<span style="color:#75715e">// SDK 초기화 여부를 판단합니다.
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">Kakao</span>.<span style="color:#a6e22e">isInitialized</span>());
+</code></pre></div><p>Javascript 키를 숨기기 위해 위 코드를 <code>index.html</code>이 아닌 <code>App.vue</code>의 <code>created()</code>부분에 넣었다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue"><span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">App</span>.<span style="color:#a6e22e">vue</span> <span style="color:#f92672">--&gt;</span>
+&lt;<span style="color:#f92672">script</span>&gt;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">JS_KEY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">VUE_APP_JS_KEY</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;App&#39;</span>,
+  <span style="color:#a6e22e">created</span>() {
+    <span style="color:#a6e22e">Kakao</span>.<span style="color:#a6e22e">init</span>(<span style="color:#a6e22e">JS_KEY</span>)
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">Kakao</span>.<span style="color:#a6e22e">isInitialized</span>())
+  }
+}
+&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>위 코드를 <code>public/index.html</code>에 넣어서 실행하면 에러가 나지 않지만 <code>App.vue</code>에서는 <code>'Kakao' is not defined</code>라는 에러가 나면서 실행이 되지 않을 것이다. 이를 해결하려면 <code>Kakao</code>를 전역변수로 등록해야한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// main.js
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">Vue</span>.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">$Kakao</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">Kakao</span>
+</code></pre></div><p>위 코드를 넣어주고</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue"><span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">App</span>.<span style="color:#a6e22e">vue</span> <span style="color:#f92672">--&gt;</span>
+&lt;<span style="color:#f92672">script</span>&gt;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">JS_KEY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">VUE_APP_JS_KEY</span>
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> {
+  <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;App&#39;</span>,
+  <span style="color:#a6e22e">created</span>() {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$Kakao</span>.<span style="color:#a6e22e">init</span>(<span style="color:#a6e22e">JS_KEY</span>)
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$Kakao</span>.<span style="color:#a6e22e">isInitialized</span>())
+  }
+}
+&lt;/<span style="color:#f92672">script</span>&gt;
+</code></pre></div><p>이렇게 변경해주면 잘 작동한다.</p>
+<p><code>KakaoLogin.vue</code>가 아닌 <code>App.vue</code>에 넣는 이유는 <code>KakaoLogin.vue</code>에 넣으면 수정사항이 있을 때마다 <code>this.$Kakao.init(JS_KEY)</code> 함수가 실행되어 <code>&quot;KakaoError: Kakao.init: Already initialized.&quot;</code>오류가 나기 때문이다. 여기 까지 하면 <code> Kakao SDK for JavaScript</code>를 사용할 준비가 끝난 것이다. 마지막으로  <a href="https://developers.kakao.com/console/app/">내 애플리케이션</a>의 카카오 로그인 항목에서 <code>Redirect URI</code>를 <code>http://localhost:8080/kakaologin</code>으로 설정한다.</p>
 
 </div>
 
