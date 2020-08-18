@@ -16,7 +16,7 @@
 1. 카카오 로그인 프로세스 로그인 과정은 다음과 같다.">
 <meta itemprop="datePublished" content="2020-08-16T22:57:58+09:00" />
 <meta itemprop="dateModified" content="2020-08-16T22:57:58+09:00" />
-<meta itemprop="wordCount" content="449">
+<meta itemprop="wordCount" content="453">
 
 
 
@@ -254,6 +254,7 @@ $ mpm i qs
 &lt;/<span style="color:#f92672">script</span>&gt;
 </code></pre></div><p>이렇게 변경해주면 잘 작동한다.</p>
 <p><code>KakaoLogin.vue</code>가 아닌 <code>App.vue</code>에 넣는 이유는 <code>KakaoLogin.vue</code>에 넣으면 수정사항이 있을 때마다 <code>this.$Kakao.init(JS_KEY)</code> 함수가 실행되어 <code>&quot;KakaoError: Kakao.init: Already initialized.&quot;</code>오류가 나기 때문이다. 여기 까지 하면 <code> Kakao SDK for JavaScript</code>를 사용할 준비가 끝난 것이다. 마지막으로  <a href="https://developers.kakao.com/console/app/">내 애플리케이션</a>의 카카오 로그인 항목에서 <code>Redirect URI</code>를 <code>http://localhost:8080/kakaologin</code>으로 설정한다.</p>
+<h4 id="3-카카오-로그인-연동">3. 카카오 로그인 연동</h4>
 
 </div>
 
