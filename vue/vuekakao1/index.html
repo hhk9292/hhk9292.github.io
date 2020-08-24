@@ -16,7 +16,7 @@
 1. 카카오 로그인 프로세스 로그인 과정은 다음과 같다.">
 <meta itemprop="datePublished" content="2020-08-16T22:57:58+09:00" />
 <meta itemprop="dateModified" content="2020-08-16T22:57:58+09:00" />
-<meta itemprop="wordCount" content="453">
+<meta itemprop="wordCount" content="884">
 
 
 
@@ -121,7 +121,7 @@
   <h1>Vue에서 Kakao SDK for JavaScript를 사용한 카카오 로그인 구현</h1>
 
   <div class="post-date">
-    <time datetime="2020-08-16T22:57:58&#43;0900">Aug 16, 2020</time> &middot; 3 min read
+    <time datetime="2020-08-16T22:57:58&#43;0900">Aug 16, 2020</time> &middot; 5 min read
   </div>
 
   <h3 id="0-공식문서">0. 공식문서</h3>
@@ -145,13 +145,14 @@
 <li>express</li>
 <li>axios</li>
 <li>cors</li>
+<li>dotenv</li>
+<li>qs</li>
 </ul>
 </li>
 <li><a href="https://vuejs.org/">Vue.js</a>
 <ul>
 <li>Vue router</li>
 <li>axios</li>
-<li>qs</li>
 </ul>
 </li>
 </ul>
@@ -165,7 +166,6 @@ $ npm run serve
 <p>서버를 닫고 필요한 모듈을 설치한다.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ vue add router
 $ npm i axios
-$ mpm i qs
 </code></pre></div><p><code>Vue router</code>의 경우 history 모드를 선택하는 화면에서 Y를 입력하여 설치한다. 필요 없는 파일들을 수정 및 삭제하면 기본 세팅은 끝이 난다.</p>
 <p><code>@/views</code>경로에 <code>KakaoLogin.vue</code> 파일을 생성한다.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vue" data-lang="vue"><span style="color:#75715e">&lt;!--</span> <span style="color:#a6e22e">KakaoLogin</span>.<span style="color:#a6e22e">vue</span> <span style="color:#f92672">--&gt;</span>
@@ -205,19 +205,11 @@ $ mpm i qs
 <span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
 &lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
   &lt;<span style="color:#f92672">head</span>&gt;
-    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>&gt;
-    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">http-equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=edge&#34;</span>&gt;
-    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width,initial-scale=1.0&#34;</span>&gt;
-    &lt;<span style="color:#f92672">link</span> <span style="color:#a6e22e">rel</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;icon&#34;</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&lt;%= BASE_URL %&gt;favicon.ico&#34;</span>&gt;
-    &lt;<span style="color:#f92672">title</span>&gt;<span style="color:#960050;background-color:#1e0010">&lt;</span>%= htmlWebpackPlugin.options.title %&gt;&lt;/<span style="color:#f92672">title</span>&gt;
     &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://developers.kakao.com/sdk/js/kakao.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
   &lt;/<span style="color:#f92672">head</span>&gt;
   &lt;<span style="color:#f92672">body</span>&gt;
     &lt;<span style="color:#f92672">noscript</span>&gt;
-      &lt;<span style="color:#f92672">strong</span>&gt;We&#39;re sorry but <span style="color:#960050;background-color:#1e0010">&lt;</span>%= htmlWebpackPlugin.options.title %&gt; doesn&#39;t work properly without JavaScript enabled. Please enable it to continue.&lt;/<span style="color:#f92672">strong</span>&gt;
-    &lt;/<span style="color:#f92672">noscript</span>&gt;
     &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;app&#34;</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
-    <span style="color:#75715e">&lt;!-- built files will be auto injected --&gt;</span>
   &lt;/<span style="color:#f92672">body</span>&gt;
 &lt;/<span style="color:#f92672">html</span>&gt;
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
@@ -255,6 +247,182 @@ $ mpm i qs
 </code></pre></div><p>이렇게 변경해주면 잘 작동한다.</p>
 <p><code>KakaoLogin.vue</code>가 아닌 <code>App.vue</code>에 넣는 이유는 <code>KakaoLogin.vue</code>에 넣으면 수정사항이 있을 때마다 <code>this.$Kakao.init(JS_KEY)</code> 함수가 실행되어 <code>&quot;KakaoError: Kakao.init: Already initialized.&quot;</code>오류가 나기 때문이다. 여기 까지 하면 <code> Kakao SDK for JavaScript</code>를 사용할 준비가 끝난 것이다. 마지막으로  <a href="https://developers.kakao.com/console/app/">내 애플리케이션</a>의 카카오 로그인 항목에서 <code>Redirect URI</code>를 <code>http://localhost:8080/kakaologin</code>으로 설정한다.</p>
 <h4 id="3-카카오-로그인-연동">3. 카카오 로그인 연동</h4>
+<h5 id="3-1-front">3-1 Front</h5>
+<p><a href="https://developers.kakao.com/tool/demo/login/login">로그인 데모</a></p>
+<p>위 문서에 있는 코드를 적절히 수정하여 옮겨 쓴다.</p>
+<ul>
+<li>
+<p>로그인 버튼</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;custom-login-btn&#34;</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">click</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;loginWithKakao&#34;</span> &gt;
+      &lt;<span style="color:#f92672">img</span>
+       <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg&#34;</span>
+       <span style="color:#a6e22e">width</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;222&#34;</span>
+      /&gt;
+&lt;/<span style="color:#f92672">a</span>&gt;
+</code></pre></div></li>
+<li>
+<p>로그인 함수</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">redirectUri</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://localhost:8080/kakaologin&#39;</span>
+<span style="color:#a6e22e">methods</span><span style="color:#f92672">:</span> {
+  <span style="color:#a6e22e">loginWithKakao</span>() {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$Kakao</span>.<span style="color:#a6e22e">Auth</span>.<span style="color:#a6e22e">authorize</span>({
+         <span style="color:#a6e22e">redirectUri</span>
+      })
+   },
+},
+</code></pre></div></li>
+</ul>
+<p>여기까지 하면 아래와 같은 화면이 나타난다.</p>
+<p><img src="/vue/images/vue_1.png" alt="vue_1"></p>
+<p>여기서 로그인 버튼을 누르면</p>
+<p><img src="/vue/images/vue_2.png" alt="vue_2"></p>
+<p>이렇게 주소창에 쿼리문으로 코드가 온다. 이제 이 코드를 받아서 백으로 넘기고 백에서 이 코드를 이용해 토큰을 받고 프론트로 넘겨주면 로그인이 완료된다.</p>
+<ul>
+<li>
+<p>코드를 받는 함수</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">computed</span><span style="color:#f92672">:</span> {
+   <span style="color:#a6e22e">getCode</span>() {
+      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$route</span>.<span style="color:#a6e22e">query</span>.<span style="color:#a6e22e">code</span>
+   }
+},
+</code></pre></div></li>
+<li>
+<p>코드 확인</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">p</span>&gt;{{ getCode }}&lt;/<span style="color:#f92672">p</span>&gt;
+</code></pre></div></li>
+</ul>
+<p>이제 로그인 버튼을 누르면 아래와 같은 화면이 나온다.</p>
+<p><img src="/vue/images/vue_3.png" alt="vue_3"></p>
+<p>코드가 잘 도착하는 것을 확인했으므로 백으로 넘겨주는 함수를 만든다.</p>
+<ul>
+<li>
+<p>코드를 백으로 넘겨주는 함수</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// KakaoLogin.vue 
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">axios</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;axios&#39;</span>
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">BASE_URL</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://localhost:3000&#39;</span>
+  
+<span style="color:#a6e22e">methods</span><span style="color:#f92672">:</span> {
+  <span style="color:#a6e22e">login</span>() {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">LOGIN_URL</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">BASE_URL</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/login&#39;</span>
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> {
+      <span style="color:#a6e22e">code</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">getCode</span>
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">config</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">data</span> }
+    <span style="color:#a6e22e">axios</span>.<span style="color:#a6e22e">post</span>(<span style="color:#a6e22e">LOGIN_URL</span>, <span style="color:#a6e22e">config</span>)
+    .<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">res</span> =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">res</span>))
+    .<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">err</span> =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">err</span>))
+  }
+}
+  
+<span style="color:#a6e22e">mounted</span>() {
+  <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">getCode</span>) {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">login</span>()
+  }
+}
+</code></pre></div><p><code>mounted()</code>에 함수를 넣어주는 이유는 코드를 받아오는 과정에서 새로고침이 발생하기 때문이다. 즉 <code>watch</code>에 <code>getCode</code>를 걸어서 사용하면 아무런 반응이 없다.</p>
+</li>
+</ul>
+<h5 id="3-2-back">3-2 Back</h5>
+<p><code>back</code> 폴더를 만들고 <code>index.js</code> 파일을 생성한 다음 <code>$ npm init</code>을 입력하여 프로젝트를 시작한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ npm i express
+$ npm i axios
+$ npm i cors
+$ npm i dotenv
+$ npm i qs
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// index.js
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">express</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cors</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;cors&#39;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">express</span>();
+
+<span style="color:#75715e">// cors
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">cors</span>());
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PORT</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3000</span>;
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">welcome</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) {
+    <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">send</span>(<span style="color:#e6db74">&#39;hello&#39;</span>)
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">portOn</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>() {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;listening on port 3000&#39;</span>)
+}
+
+<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">welcome</span>)
+<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#a6e22e">PORT</span>, <span style="color:#a6e22e">portOn</span>)
+</code></pre></div><p>간단하게 백을 구성하고 터미널에 <code>$ node index.js</code> 입력하여 서버가 열린 것을 확인한다.</p>
+<p><img src="/vue/images/vue_4.png" alt="vue_4"></p>
+<p>또한 <code>KakaoLogin.vue</code>에 다음과 같은 코드를 입력하여 백과 연결되었는지도 확인한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Vue" data-lang="Vue"><span style="color:#a6e22e">created</span>() {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">WELCOME_URL</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">BASE_URL</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/&#39;</span>
+  <span style="color:#a6e22e">axios</span>.<span style="color:#a6e22e">get</span>(<span style="color:#a6e22e">WELCOME_URL</span>)
+  .<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">res</span> =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">data</span>))
+  .<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">err</span> =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">err</span>))
+}
+</code></pre></div><p>콘솔창에 <code>hello</code>가 출력되면 프론트와 백이 연결된 것이다.</p>
+<p><code>index.js</code>에 <code>app.user(express.json())</code> 코드를 추가하고</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// index.js
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// &#39;/login&#39;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getCode</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) {
+  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">code</span>)
+}
+
+<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">post</span>(<span style="color:#e6db74">&#39;/login&#39;</span>, <span style="color:#a6e22e">getCode</span>)
+</code></pre></div><p>위와 같은 함수를 추가하고 콘솔창에 코드가 나오는지 확인한다.</p>
+<p><img src="/vue/images/vue_5.png" alt="vue_5"></p>
+<p><img src="/vue/images/vue_6.png" alt="vue_6"></p>
+<p>이제 이 코드를 카카오 서버로 보내고 토큰값을 받아 프론트로 넘기는 함수를 만들어준다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// index.js
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// &#39;/login&#39;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> getCode <span style="color:#f92672">=</span> function<span style="color:#f92672">(</span>req<span style="color:#f92672">,</span> res<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span>req<span style="color:#f92672">.</span><span style="color:#a6e22e">body</span><span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">.</span><span style="color:#a6e22e">code</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">const</span> TOKEN_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;https://kauth.kakao.com/oauth/token&#34;</span>
+    <span style="color:#66d9ef">const</span> grant_type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;authorization_code&#34;</span>
+    <span style="color:#66d9ef">const</span> client_id <span style="color:#f92672">=</span> process<span style="color:#f92672">.</span><span style="color:#a6e22e">env</span><span style="color:#f92672">.</span><span style="color:#a6e22e">REST_KEY</span>
+    <span style="color:#66d9ef">const</span> redirect_uri <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://localhost:8080/kakaologin&#34;</span>
+    <span style="color:#66d9ef">const</span> code <span style="color:#f92672">=</span> req<span style="color:#f92672">.</span><span style="color:#a6e22e">body</span><span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">.</span><span style="color:#a6e22e">code</span>
+    <span style="color:#66d9ef">const</span> headers <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+        <span style="color:#e6db74">&#34;Content-type&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;application/x-www-form-urlencoded;charset=utf-8&#34;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">const</span> data <span style="color:#f92672">=</span> qs<span style="color:#f92672">.</span><span style="color:#a6e22e">stringify</span><span style="color:#f92672">({</span>
+        grant_type<span style="color:#f92672">,</span>
+        client_id<span style="color:#f92672">,</span>
+        redirect_uri<span style="color:#f92672">,</span>
+        code
+    <span style="color:#f92672">})</span>
+    axios<span style="color:#f92672">.</span><span style="color:#a6e22e">post</span><span style="color:#f92672">(</span>
+        <span style="color:#e6db74">&#34;https://kauth.kakao.com/oauth/token&#34;</span><span style="color:#f92672">,</span>
+        data<span style="color:#f92672">,</span>
+        headers
+    <span style="color:#f92672">)</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">then</span><span style="color:#f92672">(</span>response <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">{</span>
+        console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span>response<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">)</span>
+        <span style="color:#66d9ef">const</span> accessToken <span style="color:#f92672">=</span> response<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">.</span><span style="color:#a6e22e">access_token</span>
+        res<span style="color:#f92672">.</span><span style="color:#a6e22e">send</span><span style="color:#f92672">({</span>accessToken<span style="color:#f92672">})</span>
+    <span style="color:#f92672">})</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">catch</span><span style="color:#f92672">(</span>error <span style="color:#f92672">=&gt;</span> console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span>error<span style="color:#f92672">))</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>이렇게 함수를 만들고 프론트에서는 아래와 같이 <code>login()</code> 함수를 변경한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">methods</span><span style="color:#f92672">:</span> {
+  <span style="color:#a6e22e">login</span>() {
+	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">LOGIN_URL</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">BASE_URL</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/login&#39;</span>
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">code</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">getCode</span>
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">config</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">data</span> }
+    <span style="color:#a6e22e">axios</span>.<span style="color:#a6e22e">post</span>(<span style="color:#a6e22e">LOGIN_URL</span>, <span style="color:#a6e22e">config</span>)
+    .<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">res</span> =&gt; {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">accessToken</span>)
+      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">accessToken</span>
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$Kakao</span>.<span style="color:#a6e22e">Auth</span>.<span style="color:#a6e22e">setAccessToken</span>(<span style="color:#a6e22e">token</span>)
+      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">savedToken</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">$Kakao</span>.<span style="color:#a6e22e">Auth</span>.<span style="color:#a6e22e">getAccessToken</span>()
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">savedToken</span>)
+      })
+    .<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">err</span> =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">err</span>))
+    },
+  }
+}
+</code></pre></div><p>토큰을 잘 받아왔는지 <code>Kakao.Auth.setAccessToken(),Kakao.Auth.getAccessToken() </code>을 이용해 확인한다. 이제 다른 페이지에서 <code>Kakao.Auth.getAccessToken() </code>을 통해 토큰을 이용할 수 있다.</p>
 
 </div>
 
