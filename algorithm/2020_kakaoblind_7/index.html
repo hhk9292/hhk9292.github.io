@@ -16,7 +16,7 @@
 문제 풀이 제한사항  board의 한 변의 길이는 5 이상 100 이하입니다.">
 <meta itemprop="datePublished" content="2020-09-06T20:31:58+09:00" />
 <meta itemprop="dateModified" content="2020-09-06T20:31:58+09:00" />
-<meta itemprop="wordCount" content="532">
+<meta itemprop="wordCount" content="587">
 
 
 
@@ -139,7 +139,7 @@
 <ul>
 <li>
 <p>모든 격자무늬에 보조선을 그어 로봇의 방향과 위치를 나타낼 수 있게 만들었다.</p>
-<p><img src="images/image_7_1.png" alt="image_7_1"></p>
+<p><img src="/algorithm/images/image_7_1.png" alt="image_7_1"></p>
 <ul>
 <li>위 그림처럼 나누면 로봇의 위치와 방향을 각 격자점에 1:1로 매칭시킬 수 있다.</li>
 </ul>
@@ -232,6 +232,16 @@ move <span style="color:#f92672">=</span> [
 <li>
 <p>최단시간을 반환하는 함수</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">solution</span>(board):
+    move <span style="color:#f92672">=</span> [
+        (<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>),
+        (<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>),
+        (<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>),
+        (<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>),
+        (<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>),
+        (<span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>),
+        (<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>),
+        (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+    ]
     n <span style="color:#f92672">=</span> len(board)
   
     <span style="color:#e6db74">&#34;&#34;&#34;
@@ -249,27 +259,29 @@ move <span style="color:#f92672">=</span> [
                     <span style="color:#66d9ef">for</span> l <span style="color:#f92672">in</span> range(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>):
                         land[x <span style="color:#f92672">+</span> k][y <span style="color:#f92672">+</span> l] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
   
-    length <span style="color:#f92672">=</span> len(land)
-    final <span style="color:#f92672">=</span> {(length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>), (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>)}
-    visit <span style="color:#f92672">=</span> set()
-    visit<span style="color:#f92672">.</span>add((<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>))
   
+    length <span style="color:#f92672">=</span> len(land)
+    <span style="color:#75715e"># 도착점 두 군데: 가로 방향, 세로 방향</span>
+    final <span style="color:#f92672">=</span> {(length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>), (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>)}
+  
+    visit <span style="color:#f92672">=</span> set()  <span style="color:#75715e"># 방문 여부를 검사하는 집합</span>
+    visit<span style="color:#f92672">.</span>add((<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>))  <span style="color:#75715e"># 출발점 방문 체크</span>
+  
+    <span style="color:#75715e"># BFS 탐색</span>
     queue <span style="color:#f92672">=</span> []
-    queue<span style="color:#f92672">.</span>append((<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>))
+    queue<span style="color:#f92672">.</span>append((<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>))  <span style="color:#75715e"># 위치와 현재까지 걸린 시간 저장</span>
     <span style="color:#66d9ef">while</span> queue:
         cx, cy, cnt <span style="color:#f92672">=</span> queue<span style="color:#f92672">.</span>pop(<span style="color:#ae81ff">0</span>)
-        land[cx][cy] <span style="color:#f92672">=</span> cnt
-        land[cx][cy] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-        directs <span style="color:#f92672">=</span> []
+        directs <span style="color:#f92672">=</span> []  <span style="color:#75715e"># 움직일 수 있는 방향을 담는 배열</span>
         directs<span style="color:#f92672">.</span>extend(straight_check((cx, cy), land))
         directs<span style="color:#f92672">.</span>extend(rotate_check((cx, cy), land))
-  
         <span style="color:#66d9ef">for</span> direct <span style="color:#f92672">in</span> directs:
-            nx, ny <span style="color:#f92672">=</span> cx <span style="color:#f92672">+</span> move[direct][<span style="color:#ae81ff">0</span>], cy <span style="color:#f92672">+</span> move[direct][<span style="color:#ae81ff">1</span>]
+          nx, ny <span style="color:#f92672">=</span> cx <span style="color:#f92672">+</span> move[direct][<span style="color:#ae81ff">0</span>], cy <span style="color:#f92672">+</span> move[direct][<span style="color:#ae81ff">1</span>]
+            <span style="color:#75715e"># 목적지에 도착할 수 있으면 while 문을 빠져나감</span>
             <span style="color:#66d9ef">if</span> (nx, ny) <span style="color:#f92672">in</span> final:
                 queue <span style="color:#f92672">=</span> []
                 <span style="color:#66d9ef">break</span>
-  
+              
             <span style="color:#66d9ef">if</span> (nx, ny) <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> visit:
                 visit<span style="color:#f92672">.</span>add((nx, ny))
                 queue<span style="color:#f92672">.</span>append((nx, ny, cnt <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>))
