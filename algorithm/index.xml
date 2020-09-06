@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>KISS</title>
-    <link>/</link>
-    <description>Recent content on KISS</description>
+    <title>Algorithms on KISS</title>
+    <link>/algorithm/</link>
+    <description>Recent content in Algorithms on KISS</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 06 Sep 2020 18:55:07 +0900</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/algorithm/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,16 +18,6 @@
       
       <guid>/algorithm/2020_kakaoblind_1/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>Vue에서 Kakao SDK for JavaScript를 사용한 카카오 로그인 구현</title>
-      <link>/vue/vuekakao1/</link>
-      <pubDate>Sun, 16 Aug 2020 22:57:58 +0900</pubDate>
-      
-      <guid>/vue/vuekakao1/</guid>
-      <description>0. 공식문서 kakao developers
-1. 카카오 로그인 프로세스 로그인 과정은 다음과 같다.</description>
     </item>
     
   </channel>
