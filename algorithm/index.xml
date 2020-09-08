@@ -1,15 +1,45 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Algorithms on KISS</title>
+    <title>Algorithm on KISS</title>
     <link>/algorithm/</link>
-    <description>Recent content in Algorithms on KISS</description>
+    <description>Recent content in Algorithm on KISS</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 06 Sep 2020 20:31:58 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 08 Sep 2020 22:52:35 +0900</lastBuildDate>
     
 	<atom:link href="/algorithm/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2019 KAKAO BLIND 3 후보키</title>
+      <link>/algorithm/2019_kakaoblind_3/</link>
+      <pubDate>Tue, 08 Sep 2020 22:52:35 +0900</pubDate>
+      
+      <guid>/algorithm/2019_kakaoblind_3/</guid>
+      <description>문제 풀러 가기
+문제 풀이 제한사항  relation은 2차원 문자열 배열이다.</description>
+    </item>
+    
+    <item>
+      <title>2019 KAKAO BLIND 2 실패율</title>
+      <link>/algorithm/2019_kakaoblind_2/</link>
+      <pubDate>Tue, 08 Sep 2020 22:52:30 +0900</pubDate>
+      
+      <guid>/algorithm/2019_kakaoblind_2/</guid>
+      <description>문제 풀러 가기
+문제 풀이 제한사항  스테이지의 개수 N은 1 이상 500 이하의 자연수이다.</description>
+    </item>
+    
+    <item>
+      <title>2019 KAKAO BLIND 1 오픈채팅방</title>
+      <link>/algorithm/2019_kakaoblind_1/</link>
+      <pubDate>Tue, 08 Sep 2020 22:52:26 +0900</pubDate>
+      
+      <guid>/algorithm/2019_kakaoblind_1/</guid>
+      <description>문제 풀러 가기
+문제 풀이 제한사항  record는 다음과 같은 문자열이 담긴 배열이며, 길이는 1 이상 100,000 이하이다.</description>
+    </item>
     
     <item>
       <title>2020 KAKAO BLIND 7 블록 이동하기</title>
